@@ -49,7 +49,7 @@ where we'll be focusing on the objects with $M_G < m_\mathrm{div} (BP-RP) + b_\m
 
     B. Plot the model corresponding to 50 randomly chosen posterior samples from your MCMC.  Discuss the quality of the fit.
 
-    C. **510 students:** Use your posterior estimates to predict the distribution we would expect for MG values of main sequence stars with color $(BP-RP) = 6$.
+    C. **510 students:** Use your posterior estimates to predict the distribution we would expect for $M_G$ values of main sequence stars with color $(BP-RP) = 6$.
 
 3. **510 students:** Explore higher order polynomials a bit.  How does the (qualitative) quality of the fit behave?
 
@@ -60,7 +60,7 @@ Now let's bring the white dwarfs back into the mix, focusing on all the objects 
 1. Instead of using the point-estimate provided above for a dividing line between these two populations, let's infer it from the data.  Build a `NumPyro` model with parameters describing this line, in addition to lines individually describing the stars above and below this division (assume the scatter about these lines are described by the same sigma parameter for simplicity).
 
     **Tips:**
-    1. Recall our outlier model for machinery for choosing parameters based on the values of other parameters.
+    1. Recall our outlier model we build, which provides machinery for building a mixture model that allows for our data to be described by more than one distribution.
     1. Expect lots of divergences, and don't worry too much about them if the traces otherwise look OK.
 2. Plot all three lines for each of 50 randomly chosen posterior samples from your MCMC.  Discuss the quality of the fits, and in particular the constraints on the line dividing the populations.  Any ideas why sampling might be difficult?
 
