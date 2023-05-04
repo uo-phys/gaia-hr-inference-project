@@ -57,11 +57,28 @@ where we'll be focusing on the objects with $M_G < m_\mathrm{div} (BP-RP) + b_\m
 
 Now let's bring the white dwarfs back into the mix, focusing on all the objects with parallax > 40 milliarcseconds.
 
-1. Instead of using the point-estimate provided above for a dividing line between these two populations, let's infer it from the data.  Build a `NumPyro` model with parameters describing this line, in addition to lines individually describing the stars above and below this division (assume the scatter about these lines are described by the same sigma parameter for simplicity).
+1. Construct a mixture model with `NumPyro` that simultaneously describes the main sequence stars and white dwarfs, each described by a linear relationship with its own slope, y-intercept, and scatter of observations about it.
 
     **Tips:**
-    1. Recall our outlier model we build, which provides machinery for building a mixture model that allows for our data to be described by more than one distribution.
-    1. Expect lots of divergences, and don't worry too much about them if the traces otherwise look OK.
-2. Plot all three lines for each of 50 randomly chosen posterior samples from your MCMC.  Discuss the quality of the fits, and in particular the constraints on the line dividing the populations.  Any ideas why sampling might be difficult?
+    1. Recall our outlier model we built, which outlines the machinery for building a mixture model that allows for our data to be described by more than one distribution.
+    1. Our model will now be composed of two lines.  If we impose the same priors for the parameters of each line, then the two lines will be degenerate and sampling gets unnecessarily tricky.  There are many ways we could avoid this degeneracy, but for now I suggest imposing unique priors on the y-intercepts.  I also recommend a relatively narrow prior on the slopes of the lines to get the model from trying crazy solutions:
+        ```python
+        m_ms = numpyro.sample('m_ms', dist.Uniform(2, 5))
+        b_ms = numpyro.sample('b_ms', dist.Uniform(0, 5))
 
-3. **510 students:** Instead of a dividing line, try modeling these two populations using categorical parameters _a la_ our outlier model (also called a latent variable model).  How do the results compare to the linear division?  Are there any objects with uncertain categorizations?  Highlight the posterior distribution for the fraction of stars that are white dwarfs.
+        m_wd = numpyro.sample('m_wd', dist.Uniform(2, 5))
+        b_wd = numpyro.sample('b_wd', dist.Uniform(10, 15))
+        ```
+2. Plot the two lines for each of 50 randomly chosen posterior samples from your MCMC.  Discuss the quality of the fits, and in particular the constraints.  Is the model able to identify the two populations?
+
+3. **510 students:**
+    A. Plot a distribution of the probabilities that each star in our catalog is on the main sequence.  Are there any stars which aren't confidently associated with a particular population?
+    B. Relax the priors on slope and y-intercept and run an MCMC:
+    ```python
+    m_ms = numpyro.sample('m_ms', dist.Normal(scale=10))
+    b_ms = numpyro.sample('b_ms', dist.Normal(scale=20))
+
+    m_wd = numpyro.sample('m_wd', dist.Normal(scale=10))
+    b_wd = numpyro.sample('b_wd', dist.Normal(scale=20))
+    ```
+    Take a look at the trace plots and the fits to the data.  Can you describe what's happening?
